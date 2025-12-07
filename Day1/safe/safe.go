@@ -9,7 +9,7 @@ import (
 
 func main() {
 	// Open inputs file
-	file, err := os.Open("real_input.txt")
+	file, err := os.Open("../inputs/real_input.txt")
 
 	if err != nil {
 		fmt.Println("Error opening file:", err)
