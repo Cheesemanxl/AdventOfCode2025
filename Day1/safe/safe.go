@@ -27,7 +27,7 @@ func main() {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		// Process inputs
+		// Get int representation of direction and amount from input string
 		direction := line[:1] //really cool substring syntax
 		amount, err := strconv.Atoi(line[1:])
 
@@ -36,16 +36,19 @@ func main() {
 			return
 		}
 
+		// if amount is greater than 100 count each 100 as one hit of zero
 		extra_zero_hits := amount / 100
-
-		amount = amount % 100
-
 		count = count + extra_zero_hits
+
+		// normalize amount for values over 100
+		amount = amount % 100
 
 		// Add or subtract depending on direction
 		if direction == "R" {
 			current = current + amount
 		} else {
+			// if already starting on zero and rotating left we have already counted that "zero click"
+			// so remove one to avoid duplication in the next normalization stage
 			if current == 0 {
 				count--
 			}
@@ -55,20 +58,20 @@ func main() {
 		// normalize current location between 0-99
 		if current > 100 {
 			current = current - 100
-			count++
+			count++ // count rightways zero clicks
 		} else if current < 0 {
 			current = 100 + current
-			count++
+			count++ // count leftways zero clicks
 		} else if current == 100 {
 			current = 0
 		}
 
 		if current == 0 {
-			count++
+			count++ // count exact zero clicks
 		}
 	}
 
-	fmt.Println(count)
+	fmt.Println(count) // print result for input into browser
 
 	// Check for errors during scanning
 	if err := scanner.Err(); err != nil {
