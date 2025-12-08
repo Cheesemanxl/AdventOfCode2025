@@ -1,4 +1,4 @@
-module safe
+module batteries
 
 go 1.25.4
 

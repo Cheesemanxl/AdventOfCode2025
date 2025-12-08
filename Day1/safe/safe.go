@@ -1,32 +1,19 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
+	"helpers"
 	"strconv"
 )
 
 func main() {
-	// Open inputs file
-	file, err := os.Open("../inputs/real_input.txt")
-
-	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return
-	}
-	defer file.Close()
-
-	// Instantiate scanner to parse txt file
-	scanner := bufio.NewScanner(file)
+	var array = helpers.ReadInputFile("../inputs/real_input.txt")
 
 	count := 0
 	current := 50
 
 	// Iterate over each line
-	for scanner.Scan() {
-		line := scanner.Text()
-
+	for _, line := range array {
 		// Get int representation of direction and amount from input string
 		direction := line[:1] //really cool substring syntax
 		amount, err := strconv.Atoi(line[1:])
@@ -72,9 +59,4 @@ func main() {
 	}
 
 	fmt.Println(count) // print result for input into browser
-
-	// Check for errors during scanning
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Error reading file:", err)
-	}
 }

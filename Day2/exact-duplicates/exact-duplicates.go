@@ -1,33 +1,19 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"helpers"
-	"os"
 	"strconv"
 	"strings"
 )
 
 func main() {
-	// Open inputs file
-	file, err := os.Open("../inputs/real_input.txt")
-
-	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return
-	}
-	defer file.Close()
-
-	// Instantiate scanner to parse txt file
-	scanner := bufio.NewScanner(file)
+	var array = helpers.ReadInputFile("../inputs/real_input.txt")
 
 	var sum int64 = 0
 
 	// Iterate over each line
-	for scanner.Scan() {
-		line := scanner.Text()
-
+	for _, line := range array {
 		array := strings.Split(line, ",")
 
 		for _, str := range array {
