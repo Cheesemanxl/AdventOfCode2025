@@ -12,7 +12,7 @@ import (
 var nextMatrix [][]int32
 
 func main() {
-	var array []string = helpers.ReadInputFile("../inputs/real_input.txt")
+	var array []string = helpers.ReadInputFile("../inputs/input.txt")
 	var matrix [][]int32 = buildMatrix(array)
 
 	part1(matrix)

@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	var array = helpers.ReadInputFile("../inputs/real_input.txt")
+	var array = helpers.ReadInputFile("../inputs/input.txt")
 
 	count := 0
 	current := 50
