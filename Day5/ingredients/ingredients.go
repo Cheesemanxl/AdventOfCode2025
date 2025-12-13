@@ -3,41 +3,108 @@ package main
 import (
 	"fmt"
 	"helpers"
+	"slices"
 	"strings"
 )
 
-type Range struct {
-	low  int64
-	high int64
-}
-
 func main() {
-	var array []string = helpers.ReadInputFile("../inputs/test.txt")
+	var array []string = helpers.ReadInputFile("../inputs/input.txt")
 
 	part2(array)
 }
 
 func part2(array []string) {
-	var ranges []Range
+	var lows []int64
+	var highs []int64
 
+	// translate data from one string slice into two int64 slices
 	for _, line := range array {
 		if strings.Contains(line, "-") {
 			splitString := strings.Split(line, "-")
 
-			convertedLow := helpers.StrToInt64(splitString[0])
-			convertedHigh := helpers.StrToInt64(splitString[1])
-
-			ranges = append(ranges, Range{low: convertedLow, high: convertedHigh})
+			lows = append(lows, helpers.StrToInt64(splitString[0]))
+			highs = append(highs, helpers.StrToInt64(splitString[1]))
 		} else {
 			break
 		}
 	}
 
-	for _, item := range ranges {
-		fmt.Print(item.low)
-		fmt.Print("-")
-		fmt.Println(item.high)
+	// consolidate all ranges that overlap
+whileloop:
+	for {
+		isRemainingOverlaps := false
+	overlapCheck:
+		for i := 0; i < len(lows); i++ {
+			for j := i + 1; j < len(lows); j++ {
+				if isInRange(lows[i], highs[i], lows[j], highs[j]) {
+					isRemainingOverlaps = true
+					break overlapCheck
+				}
+			}
+		}
+
+		if !isRemainingOverlaps {
+			break whileloop
+		}
+
+		for i := 0; i < len(lows); i++ {
+			for j := i + 1; j < len(lows); j++ {
+				// if either end of one range is in the other range,
+				// use the lowest or highest value from the combination of ranges,
+				// assign it to the first range values and delete the other range values
+				if isInRange(lows[i], highs[i], lows[j], highs[j]) {
+					if lows[i] > lows[j] {
+						lows[i] = lows[j]
+					}
+
+					if highs[i] < highs[j] {
+						highs[i] = highs[j]
+					}
+
+					lows = slices.Delete(lows, j, j+1)
+					highs = slices.Delete(highs, j, j+1)
+				}
+			}
+		}
 	}
+
+	// remove duplicate ranges
+	for i := 0; i < len(lows); i++ {
+		for j := i + 1; j < len(lows); j++ {
+			if lows[i] == lows[j] && highs[i] == highs[j] {
+				lows = slices.Delete(lows, j, j+1)
+				highs = slices.Delete(highs, j, j+1)
+			}
+		}
+	}
+
+	var sum int64 = 0
+
+	for index, item := range lows {
+		sum += highs[index] - item + 1
+	}
+
+	fmt.Println(sum)
+}
+
+func isInRange(low1 int64, high1 int64, low2 int64, high2 int64) bool {
+	if low1 >= low2 && low1 <= high2 {
+		return true
+	}
+
+	if high1 <= high2 && high1 >= low2 {
+		return true
+	}
+
+	if low2 >= low1 && low2 <= high1 {
+		return true
+	}
+
+	if high2 <= high1 && high2 >= low1 {
+		return true
+	}
+
+	return false
 }
 
 func part1(array []string) {
@@ -55,7 +122,6 @@ func part1(array []string) {
 		} else if line != "" {
 			idsToCheck = append(idsToCheck, helpers.StrToInt64(line))
 		}
-
 	}
 
 	freshIngredients := 0
